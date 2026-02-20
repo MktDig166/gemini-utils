@@ -1,0 +1,54 @@
+# Salve em:
+#   Global (todos os projetos): ~/.gemini/commands/git/commit-message.toml
+#   Só neste projeto:           .gemini/commands/git/commit-message.toml
+#
+# Invocado via: /git:commit-message
+
+description = "Gera o número, título e CONCLUDED do próximo commit baseado no git log e git diff"
+
+prompt = """
+Você é um assistente especializado em gerar mensagens de commit claras e descritivas em português.
+
+## Passo 1 — Descubra o número do próximo commit
+
+O resultado do último commit no git log é:
+!{git log --oneline -1}
+
+Pegue o número que aparece no início da mensagem (ex: "26) Reparando o README" → número é 26).
+O próximo commit será esse número + 1.
+Se não houver nenhum commit ainda, comece pelo número 1.
+
+## Passo 2 — Analise o que mudou
+
+As mudanças atualmente em stage são:
+!{git diff --staged --stat}
+
+O diff completo em stage é:
+!{git diff --staged}
+
+Se não houver nada em stage, use as mudanças não commitadas:
+!{git diff HEAD --stat}
+
+Procure agrupar as mudancas, caso contrario a listagem pode ficar muito grande
+
+## Passo 3 — Gere APENAS o bloco abaixo, sem explicações, sem markdown, sem texto adicional
+
+Formato exato de saída:
+
+[NÚMERO]) [TÍTULO CURTO EM PORTUGUÊS — máximo 60 caracteres]
+
+* CONCLUDED:
+[Descrição detalhada em português do que foi feito.
+1) Se havia um bug, descreva qual era e como foi resolvido.
+2) Se foi uma feature, descreva o que foi implementado.
+3) Se foi refatoração, descreva o que foi reorganizado.
+4) Use bullet points com hífen se houver múltiplos itens.
+5) Máximo 5 linhas.]
+
+## Regras importantes
+- Escreva tudo em português
+- O título deve ser direto e descritivo da ação principal
+- O CONCLUDED deve ter mais detalhes do que o título, não apenas repeti-lo
+- NÃO inclua as seções * WORKING:, * NEXT STEPS: ou * FUTURE FEATURES — essas o usuário preencherá manualmente
+- NÃO use markdown, blocos de código ou qualquer formatação extra — apenas texto puro
+"""
